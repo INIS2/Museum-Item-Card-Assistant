@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Museum Item Card Assistant</title>
+    <meta
+      name="description"
+      content="박물관 소장품 데이터를 템플릿에 반영하고 개별 또는 일괄 PDF로 내보내는 정적 웹 애플리케이션"
+    />
+    <link rel="stylesheet" href="./assets/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+    <script src="./assets/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header panel">
+        <div class="app-header__title">
+          <p class="eyebrow">Museum Workflow</p>
+          <h1>Museum Item Card Assistant</h1>
+          <p class="hero-copy">
+            데이터를 불러오고, 템플릿을 고르고, 좌측 시트와 우측 출력물을 함께 보면서 PDF로 내보내는 관리 카드 작업 화면입니다.
+          </p>
+        </div>
+        <div class="app-header__meta">
+          <span class="badge">Static Web App</span>
+          <span class="badge">GitHub Pages Ready</span>
+          <span class="badge">Excel Template Workflow</span>
+        </div>
+      </header>
+
+      <header class="top-band">
+        <section class="panel source-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Source</p>
+              <h2>데이터 선택</h2>
+            </div>
+            <div class="hero-actions">
+              <button id="load-sample-btn" class="button secondary">샘플 데이터</button>
+              <label class="button primary file-button">
+                엑셀 / JSON 업로드
+                <input id="data-file-input" type="file" accept=".xlsx,.xlsm,.csv,.json" />
+              </label>
+            </div>
+          </div>
+          <dl class="info-grid">
+            <div>
+              <dt>파일</dt>
+              <dd id="dataset-name">불러온 데이터 없음</dd>
+            </div>
+            <div>
+              <dt>행 수</dt>
+              <dd id="dataset-count">0</dd>
+            </div>
+            <div>
+              <dt>시트</dt>
+              <dd id="dataset-sheet">-</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="panel template-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Template</p>
+              <h2>템플릿 선택</h2>
+            </div>
+            <span id="active-template-name" class="badge">템플릿 미선택</span>
+          </div>
+          <div class="template-select-row">
+            <select id="template-select" class="template-select" aria-label="템플릿 선택"></select>
+          </div>
+        </section>
+      </header>
+
+      <main class="detail-workspace">
+        <section class="panel data-stage">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">Data Grid</p>
+              <h2>엑셀형 데이터 보기</h2>
+            </div>
+            <span id="selection-summary" class="badge">선택 0건</span>
+          </div>
+
+          <div class="record-tools">
+            <input id="record-search" type="search" placeholder="자료번호, 명칭, 기관명 검색" />
+            <div class="record-tool-row">
+              <button id="select-visible-btn" class="button ghost">보이는 항목 선택</button>
+              <button id="clear-selection-btn" class="button ghost">선택 해제</button>
+            </div>
+          </div>
+
+          <div id="record-list" class="grid-sheet"></div>
+        </section>
+
+        <section class="preview-column">
+          <section class="preview-stage">
+            <div class="stage-topbar">
+              <div>
+                <p class="panel-kicker">Preview</p>
+                <h2>템플릿 미리보기</h2>
+              </div>
+              <div class="action-row">
+                <button id="export-current-btn" class="button primary">현재 항목 PDF</button>
+                <button id="export-batch-btn" class="button secondary">선택 항목 ZIP</button>
+                <button id="print-preview-btn" class="button ghost">브라우저 인쇄 보기</button>
+              </div>
+            </div>
+
+            <div class="status-strip">
+              <span id="active-record-name" class="status-pill">레코드 미선택</span>
+            </div>
+
+            <div id="preview-canvas" class="preview-canvas">
+              <div class="empty-state">
+                <h3>데이터와 템플릿을 선택하세요</h3>
+                <p>왼쪽은 데이터 시트, 오른쪽은 선택한 양식의 출력 결과를 보여줍니다.</p>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

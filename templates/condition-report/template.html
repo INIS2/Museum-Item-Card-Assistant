@@ -1,0 +1,49 @@
+<article class="template-root condition-report">
+  <header class="condition-report__header">
+    <div>
+      <p class="panel-kicker">Condition Report</p>
+      <h1>보존 상태 보고서</h1>
+    </div>
+    <div class="mono">[[자료번호]]-[[세부번호]]</div>
+  </header>
+
+  <section class="condition-report__panel">
+    <dl class="kv">
+      <dt>명칭</dt>
+      <dd>[[명칭]]</dd>
+      <dt>자료구분</dt>
+      <dd>[[자료구분]]</dd>
+      <dt>작가</dt>
+      <dd>[[작가]]</dd>
+      <dt>등록일자</dt>
+      <dd>[[등록일자]]</dd>
+      <dt>보존처리 필요</dt>
+      <dd>[[CHOICE:보존처리 필요|여,부]]</dd>
+      <dt>손상등급</dt>
+      <dd>[[CHOICEMAP:손상등급|1=1등급,2-1=2-1등급,2-2=2-2등급,3=3등급]]</dd>
+    </dl>
+  </section>
+
+  <section class="condition-report__grid">
+    <article class="condition-report__block">
+      <h2>물성 및 특징</h2>
+      <p>[[특징]]</p>
+    </article>
+    <article class="condition-report__block">
+      <h2>현재 상태</h2>
+      <p>자료상태: [[CHOICE:자료상태|상,중,하]]</p>
+      <p>전시우선순위: [[CHOICE:전시순위|상,중,하]]</p>
+      <p>현존여부: [[현존여부]]</p>
+    </article>
+    <article class="condition-report__block">
+      <h2>보존 메모</h2>
+      <p>[[보존메모]]</p>
+    </article>
+    <article class="condition-report__block">
+      <h2>조사 정보</h2>
+      <p>조사자: [[조사자]]</p>
+      <p>기관: [[기관명]]</p>
+      <p>관련자료: [[관련자료]]</p>
+    </article>
+  </section>
+</article>

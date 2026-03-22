@@ -1,129 +1,179 @@
 # Museum Item Card Assistant
 
-박물관 소장품 정보를 입력하면 관리용 카드 양식을 정리해 주는 도구입니다.
+박물관·미술관·기록물 관리용 카드 양식을 데이터 기반으로 렌더링하고, 개별 또는 일괄 PDF로 내보내는 정적 웹 애플리케이션입니다.
 
-## Overview
+이 저장소는 기존 Excel/VBA 기반 `museum_card-v0.3.xlsm`의 작업 흐름을 GitHub Pages에서 운영 가능한 형태로 옮기는 것을 목표로 합니다.
 
-- 어떤 문제를 해결하는지
-- 누가 사용하는지
-- 어떤 방식으로 도움을 주는지
+## 목표
 
-## Key Features
+- 데이터 파일을 업로드하면 각 행을 카드/서식 단위로 렌더링합니다.
+- 여러 개의 양식을 템플릿으로 관리합니다.
+- 왼쪽에서 값 편집, 오른쪽에서 실시간 미리보기를 제공합니다.
+- 현재 행 단건 PDF와 여러 행 일괄 PDF ZIP 다운로드를 지원합니다.
+- 서버 없이 GitHub Pages에 배포 가능한 구조를 유지합니다.
 
-핵심 기능을 bullet 형식으로 적어 주세요.
+## 원본 Excel/VBA 기준 동작
 
-- 기능 1: [설명 입력]
-- 기능 2: [설명 입력]
-- 기능 3: [설명 입력]
+`data/museum_card-v0.3.xlsm` 내부 로직과 README 시트를 기준으로 다음 규칙을 유지합니다.
 
-## Target Users
+- 데이터 시트: `MuseumData`
+- 양식 시트: `관리카드양식`
+- 제어 컬럼
+  - `<<개별저장>>`: 현재 행 단건 저장
+  - `<<미리보기>>`: 현재 행 미리보기
+  - `<<일괄여부>>`: 일괄 저장 대상 표시
+  - `<<일괄저장>>`: 전체 또는 선택 행 일괄 저장
+- 파일명 규칙: `NAMOK-자료번호-세부번호.pdf`
+- 예외 처리: 자료번호/세부번호가 비면 `Unknown`
+- 금지문자 치환: `/ \ : * ? " < > |`
 
-주요 사용자를 적어 주세요.
+확인한 VBA 핵심 함수는 아래와 같습니다.
 
-- [예: 큐레이터]
-- [예: 박물관/미술관 실무자]
-- [예: 전시 콘텐츠 작성 담당자]
+- `PrintCardByRow`
+- `BatchSaveCards`
+- `RenderTemplateText`
+- `ResolveToken`
+- `ResolveChoiceToken`
+- `ResolveChoiceMapToken`
+- `GetCellValueByHeader`
+- `GetHeaderColumn`
 
-## Input and Output
+## 템플릿 문법
 
-무엇을 넣고 무엇이 나오는지 간단히 정리해 주세요.
+웹 버전은 Excel 양식의 토큰 문법을 그대로 계승합니다.
 
-### Input
+- 일반 치환: `[[명칭]]`
+- 복합 치환: `[[수량]] [[수량단위]]`
+- 선택형 출력: `[[CHOICE:저작권(유무)|유,무]]`
+- 코드-라벨 매핑: `[[CHOICEMAP:손상등급|1=1등급,2-1=2-1등급,2-2=2-2등급,3=3등급]]`
 
-- [입력 데이터 1]
-- [입력 데이터 2]
-- [입력 방식: 수동 입력 / 파일 업로드 / API 등]
+웹 구현에서는 `CHOICE`와 `CHOICEMAP`을 실제 선택 상태가 드러나도록 렌더링합니다.
 
-### Output
+- `CHOICE`: 선택된 항목은 체크된 상태로 표시
+- `CHOICEMAP`: 실제 값에 해당하는 라벨을 강조 표시
 
-- [출력 결과 1]
-- [출력 결과 2]
-- [출력 형식: 텍스트 / 카드 초안 / JSON 등]
+## 템플릿 구조
 
-## Tech Stack
+템플릿은 `/templates` 아래 폴더 단위로 관리합니다.
 
-사용한 기술이나 예정 기술을 적어 주세요.
+```text
+templates/
+├─ catalog.json
+├─ museum-management-card/
+│  ├─ meta.json
+│  └─ template.html
+├─ exhibition-label/
+│  ├─ meta.json
+│  └─ template.html
+└─ condition-report/
+   ├─ meta.json
+   └─ template.html
+```
 
-- Frontend: [예: React, HTML/CSS, 없음]
-- Backend: [예: FastAPI, Node.js, 없음]
-- Database: [예: SQLite, PostgreSQL, 없음]
-- AI / NLP: [예: OpenAI API, 로컬 모델, 규칙 기반]
-- Deployment: [예: Vercel, Docker, 사내 서버]
+각 템플릿은 다음 두 파일을 가집니다.
 
-## Project Structure
+- `meta.json`: 이름, 설명, 용지 크기, 파일명 규칙, 대표 필드, 태그
+- `template.html`: 실제 렌더링용 HTML 마크업
 
-구조가 잡히면 아래처럼 정리해 주세요.
+## 웹 앱 구조
 
 ```text
 Museum-Item-Card-Assistant/
-├─ [src/]
-├─ [docs/]
-├─ [assets/]
-└─ [etc...]
+├─ index.html
+├─ assets/
+│  ├─ app.js
+│  ├─ styles.css
+├─ templates/
+│  ├─ catalog.json
+│  ├─ museum-management-card/
+│  ├─ exhibition-label/
+│  └─ condition-report/
+└─ data/
+   ├─ sample-data.csv
+   ├─ sample-data.xlsx
+   ├─ museum_card-v0.3.xlsm
+   ├─ MICA 변수명.xlsx
+   └─ 일괄 소장자료.xlsx
 ```
 
-## Getting Started
+## 주요 기능
 
-실행 방법이 생기면 아래 내용을 채워 주세요.
+- `xlsx`, `xlsm`, `csv`, `json` 업로드
+- `MuseumData` 시트 우선 인식
+- 템플릿 선택 후 즉시 미리보기
+- 현재 행 필드 편집
+- 템플릿 필요 필드 중심의 입력 폼
+- 단건 PDF 다운로드
+- 여러 행 PDF 생성 후 ZIP 다운로드
+- GitHub Pages 배포 대응 정적 파일 구조
 
-### Requirements
+## 사용 흐름
 
-- [예: Node.js 20+]
-- [예: Python 3.11+]
-- [예: API key]
+1. 데이터 업로드
+   - `xlsx`, `xlsm`, `csv`, `json` 중 하나를 업로드합니다.
+   - `MuseumData` 시트가 있으면 우선 사용합니다.
 
-### Installation
+2. 템플릿 선택
+   - 기본 제공 템플릿 중 하나를 고릅니다.
+   - `museum-management-card`는 Excel `관리카드양식` 구조를 참고해 만든 템플릿입니다.
 
-```bash
-# 설치 명령어 입력
+3. 레코드 선택
+   - 목록에서 현재 편집할 행을 고릅니다.
+   - 여러 행을 체크하면 일괄 ZIP 내보내기에 사용됩니다.
+
+4. 값 편집
+   - 왼쪽 입력 폼에서 현재 행 값을 수정합니다.
+   - 오른쪽 미리보기에 즉시 반영됩니다.
+
+5. 내보내기
+   - 현재 레코드만 PDF로 저장하거나
+   - 선택 행 또는 전체 행을 PDF ZIP으로 저장합니다.
+
+## GitHub Pages 배포
+
+이 프로젝트는 빌드 단계 없이 정적 호스팅이 가능하도록 구성되었습니다.
+
+### 로컬 테스트
+
+정적 파일을 직접 여는 대신 HTTP 서버로 확인하는 편이 안전합니다.
+
+```powershell
+./serve-local.ps1
 ```
 
-### Run
+기본 주소는 `http://127.0.0.1:8080` 입니다.
 
-```bash
-# 실행 명령어 입력
-```
+### 배포 방법
 
-## Usage
+1. 저장소를 GitHub에 푸시합니다.
+2. `Settings > Pages`에서 배포 브랜치를 `main` / root 로 설정합니다.
+3. 배포 후 `index.html`이 시작 페이지로 제공됩니다.
 
-사용 흐름이나 대표적인 사용 예시를 적어 주세요.
+### 런타임 외부 라이브러리
 
-1. 사전준비
-- 전처리: 변환하고싶은 data를 엑셀형식 정리한다.
-- 템플릿: data의 컬럼명과 같은 변수명을 가진 빈 템플릿을 확보한다.
+클라이언트에서만 사용하는 CDN 스크립트를 로드합니다.
 
-2. 입력
-- 원하는 데이터와 템플릿을 넣는다.
+- `SheetJS`: Excel/CSV 읽기
+- `html2pdf.js`: PDF 생성
+- `JSZip`: 다건 압축 다운로드
 
-3. 출력
-- 들어간 값을 보고 출력(개별/일관)한다. 
-- PDF로 나온다.
+정적 호스팅에는 서버 설정이 필요하지 않습니다.
 
-## Roadmap
+## 주의 사항
 
-예정 기능이나 진행 계획을 적어 주세요.
+- 브라우저 기반 PDF 생성 품질은 사용 브라우저와 폰트 환경의 영향을 받습니다.
+- 대량 일괄 출력 시 브라우저 메모리 사용량이 증가할 수 있습니다.
+- GitHub Pages에서는 로컬 폰트가 아닌 웹 안전 폰트 또는 공개 웹폰트를 고려해야 합니다.
+- 템플릿 내 필드명은 데이터 헤더와 정확히 일치해야 합니다.
 
-- [ ] [할 일 1]
-- [ ] [할 일 2]
-- [ ] [할 일 3]
+## 향후 확장 제안
 
-## Notes
+- 사용자 정의 템플릿 업로드
+- 템플릿 시각 편집기
+- 이미지 필드 및 바코드 지원
+- 다국어 템플릿 세트
+- 인쇄 프리셋 및 용지별 레이아웃 저장
 
-제약 사항, 주의 사항, 현재 미완성인 부분이 있으면 적어 주세요.
-
-- [주의 사항 1]
-- [주의 사항 2]
-
-## Contributing
-
-협업 방침이 있으면 적어 주세요.
-
-예시:
-
-1. 이슈 등록
-2. 브랜치 생성
-3. 작업 후 Pull Request 제출
-
-## License
+## 라이선스
 
 이 프로젝트는 [LICENSE](./LICENSE)를 따릅니다.

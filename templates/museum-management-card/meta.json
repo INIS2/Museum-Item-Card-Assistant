@@ -1,0 +1,22 @@
+{
+  "id": "museum-management-card",
+  "name": "관리카드 기본형",
+  "description": "Excel 관리카드양식의 구조와 토큰 문법을 그대로 옮긴 A4 세로형 카드",
+  "paper": "A4",
+  "orientation": "portrait",
+  "fileNamePattern": "NAMOK-{{자료번호}}-{{세부번호}}.pdf",
+  "primaryFields": [
+    "자료번호",
+    "세부번호",
+    "명칭",
+    "자료구분",
+    "작가",
+    "국적",
+    "시대",
+    "연도",
+    "특징",
+    "자료상태",
+    "전시순위"
+  ],
+  "tags": ["xlsm-reference", "card", "a4", "portrait"]
+}

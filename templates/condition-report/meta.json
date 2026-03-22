@@ -1,0 +1,21 @@
+{
+  "id": "condition-report",
+  "name": "보존 상태 보고서",
+  "description": "보존 처리 판단과 상태 기록을 문서형으로 출력하는 A4 세로형 템플릿",
+  "paper": "A4",
+  "orientation": "portrait",
+  "fileNamePattern": "CONDITION-{{자료번호}}-{{세부번호}}.pdf",
+  "primaryFields": [
+    "명칭",
+    "자료번호",
+    "세부번호",
+    "자료구분",
+    "손상등급",
+    "보존처리 필요",
+    "특징",
+    "보존메모",
+    "조사자",
+    "등록일자"
+  ],
+  "tags": ["condition", "report", "conservation"]
+}

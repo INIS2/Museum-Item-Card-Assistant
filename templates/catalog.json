@@ -1,0 +1,17 @@
+[
+  {
+    "id": "museum-management-card",
+    "meta": "./museum-management-card/meta.json",
+    "template": "./museum-management-card/template.html"
+  },
+  {
+    "id": "exhibition-label",
+    "meta": "./exhibition-label/meta.json",
+    "template": "./exhibition-label/template.html"
+  },
+  {
+    "id": "condition-report",
+    "meta": "./condition-report/meta.json",
+    "template": "./condition-report/template.html"
+  }
+]
